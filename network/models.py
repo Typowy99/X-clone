@@ -4,13 +4,26 @@ from django.db import models
 
 class User(AbstractUser):
     authored_posts = models.ManyToManyField('Post', related_name='authors')
+    followers = models.ManyToManyField('self', symmetrical=False, related_name='following')
 
+    @property
+    def followers_count(self):
+        return self.followers.count()
+    
+    @property
+    def following_count(self):
+        return self.following.count()
+    
 
 class Post(models.Model):
     post_author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+
+    @property
+    def likes_count(self):
+        return self.likes.count()
 
 
 class Comment(models.Model):

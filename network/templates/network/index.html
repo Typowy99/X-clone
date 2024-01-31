@@ -1,6 +1,7 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+
 {% if user.is_authenticated %}
     <h4>New Post</h4>
     <form id="post-form" action="{% url 'add_post' %}" method="post">
@@ -9,4 +10,13 @@
         <button type="submit" class="btn btn-secondary px-5">Post</button>
     </form>
 {% endif%}
+
+{% for post in posts %}
+    <div>{{post.post_author}}</div>
+    <div>{{post.content}}</div>
+    <div>{{post.created_at}}</div>
+    <div>likes: {{post.likes_count}}</div>
+    <hr> 
+{% endfor %}
+
 {% endblock %}

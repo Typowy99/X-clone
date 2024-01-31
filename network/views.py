@@ -13,10 +13,12 @@ class PostForm(forms.Form):
 
 
 def index(request):
+    posts = Post.objects.all().order_by('-created_at')
     if request.user.is_authenticated:
         form = PostForm()
         return render(request, "network/index.html", {
-            "form": form
+            "form": form,
+            "posts": posts
         })
     return render(request, "network/index.html")
 
@@ -30,6 +32,16 @@ def add_post(request):
             post = Post.objects.create(post_author=request.user, content=post_content)
             post.save()
             return redirect('index')
+
+
+def profile_view(request, user_name):
+    user_info = User.objects.get(username=user_name)
+    posts = Post.objects.filter(post_author=user_info.id).order_by('-created_at')
+    return render(request, "network/profile.html", {
+        "user_info": user_info,
+        "posts": posts
+    })
+
 
 
 def login_view(request):

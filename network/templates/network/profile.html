@@ -1,0 +1,21 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+{% if user.username != user_info.username %}
+    <button type="submit" class="btn btn-secondary">Follow</button>
+{% endif %}
+
+<div>{{user_info}}</div>
+<div>Followers: {{user_info.followers_count}}</div>
+<div>Following: {{user_info.following_count}}</div>
+
+<h4>posts:</h4>
+{% for post in posts %}
+    <div>{{post.post_author}}</div>
+    <div>{{post.content}}</div>
+    <div>{{post.created_at}}</div>
+    <hr> 
+{% endfor %}
+
+{% endblock %}
