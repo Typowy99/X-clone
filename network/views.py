@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
+from django.views.decorators.csrf import csrf_exempt
 from .models import User, Comment, Post
 from django import forms
+import json
 
 class PostForm(forms.Form):
     comment = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-label', 'rows': '3', 'style': 'width: 100%;'}), label=False)
@@ -35,14 +36,33 @@ def add_post(request):
 
 
 def profile_view(request, user_name):
-    user_info = User.objects.get(username=user_name)
-    posts = Post.objects.filter(post_author=user_info.id).order_by('-created_at')
+    profile = User.objects.get(username=user_name)
+    posts = Post.objects.filter(post_author=profile.id).order_by('-created_at')
     return render(request, "network/profile.html", {
-        "user_info": user_info,
-        "posts": posts
+        "profile": profile,
+        "posts": posts,
     })
 
 
+@csrf_exempt
+@login_required(login_url='login')
+def follow(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get('username')
+        if username:
+            user_to_follow = get_object_or_404(User, username=username)
+            if request.user.follows.filter(id=user_to_follow.id).exists():
+                request.user.follows.remove(user_to_follow)
+                return JsonResponse({'follow': False})
+            else:
+                request.user.follows.add(user_to_follow)
+                return JsonResponse({'follow': True})
+        else:
+            return JsonResponse({'error': 'Invalid data'})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
+    
 
 def login_view(request):
     if request.method == "POST":

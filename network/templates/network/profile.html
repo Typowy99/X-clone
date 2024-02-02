@@ -1,14 +1,20 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 
-{% if user.username != user_info.username %}
-    <button type="submit" class="btn btn-secondary">Follow</button>
-{% endif %}
+{%if not user == profile %}
+    {% if profile in user.follows.all %}
+        <button id="follow-btn" type="button" class="btn btn-primary" data-username={{profile}}>Unfollow</button>
+    {% else %}
+        <button id="follow-btn" class="btn btn-primary" data-username={{profile}}>Follow</button>
+    {% endif %}
+{% endif%}
 
-<div>{{user_info}}</div>
-<div>Followers: {{user_info.followers_count}}</div>
-<div>Following: {{user_info.following_count}}</div>
+
+<div id="user_name">{{profile}}</div>
+<div>Following: {{ profile.follows.all.count }}</div>
+<div>Followers: {{ profile.followed_by.all.count }}</div>
 
 <h4>posts:</h4>
 {% for post in posts %}
@@ -18,4 +24,8 @@
     <hr> 
 {% endfor %}
 
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/profile.js' %}"></script>
 {% endblock %}
