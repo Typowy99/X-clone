@@ -11,6 +11,8 @@ class User(AbstractUser):
         symmetrical=False, 
         related_name='followed_by',
         blank=True)
+    last_activity = models.DateTimeField(auto_now=True)
+    #profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     
 
 class Post(models.Model):

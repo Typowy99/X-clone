@@ -24,6 +24,18 @@ def index(request):
     return render(request, "network/index.html")
 
 
+def all_users(request):
+    if request.user.is_authenticated:
+        users = User.objects.exclude(id=request.user.id)
+        return render(request, "network/all_users.html", {
+            "users": users
+        })
+    else:
+        users = User.objects.all()
+        return render(request, "network/all_users.html", { "users": users })
+
+
+
 @login_required(login_url='login')
 def view_following_posts(request):
     users_followed = request.user.follows.all()
