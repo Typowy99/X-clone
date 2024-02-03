@@ -1,15 +1,14 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 
 {% for post in posts %}
-    <div>    
-        <a href="{% url 'profile' post.post_author.username %}">{{ post.post_author }}</a>
-    </div>
-    <div>{{post.content}}</div>
-    <div>{{post.created_at}}</div>
-    <div>likes: {{post.likes_count}}</div>
-    <hr> 
+    {% include 'network/post.html' %}
 {% endfor %}
 
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/likes.js' %}"></script>
 {% endblock %}

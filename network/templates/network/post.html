@@ -1,0 +1,14 @@
+<div>    
+    <a href="{% url 'profile' post.post_author.username %}">{{ post.post_author }}</a>
+</div>
+<div></div>
+<div>{{post.content}}</div>
+<div>{{post.created_at}}</div>
+<button id="like-btn-{{post.id}}">
+    {% if user in post.likes.all %}
+        <i class="fa-solid fa-heart"></i><span id="likes-count-{{post.id}}">{{ post.likes.all.count }}</span>
+    {% else %}
+        <i class="fa-regular fa-heart"></i><span id="likes-count-{{post.id}}">{{ post.likes.all.count }}</span>
+    {% endif %}
+</button>
+<hr> 

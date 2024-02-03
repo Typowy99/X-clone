@@ -66,6 +66,25 @@ def edit_post(request):
         return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
 
 
+@csrf_exempt
+@login_required(login_url='login')
+def like_post(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        post = get_object_or_404(Post, id=post_id)
+
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            return JsonResponse({'like': False, 'likes_count': post.likes.count()})
+        else:
+            post.likes.add(request.user)
+            return JsonResponse({'like': True, 'likes_count': post.likes.count()})
+
+    else:
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)  
+
+
 def profile_view(request, user_name):
     profile = User.objects.get(username=user_name)
     posts = Post.objects.filter(post_author=profile.id).order_by('-created_at')

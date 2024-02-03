@@ -5,3 +5,7 @@
 [id^="edit-formarea-"] {
     display: none;
 }
+[id^="like-btn-"] {
+    border: none;
+    background-color: none;
+}
