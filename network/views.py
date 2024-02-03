@@ -9,19 +9,32 @@ from .models import User, Comment, Post
 from django import forms
 import json
 
+#import Pagination Stuff
+from django.core.paginator import Paginator
+
+
+
 class PostForm(forms.Form):
     comment = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-label', 'rows': '3', 'style': 'width: 100%;'}), label=False)
 
 
 def index(request):
-    posts = Post.objects.all().order_by('-created_at')
+
+    # Set up Pagination
+    p = Paginator(Post.objects.all().order_by('-created_at'), 10)
+    page = request.GET.get('page')
+    posts = p.get_page(page)
+
+
     if request.user.is_authenticated:
         form = PostForm()
         return render(request, "network/index.html", {
             "form": form,
             "posts": posts
         })
-    return render(request, "network/index.html")
+    return render(request, "network/index.html", {
+        "posts": posts
+    })
 
 
 def all_users(request):
@@ -39,7 +52,12 @@ def all_users(request):
 @login_required(login_url='login')
 def view_following_posts(request):
     users_followed = request.user.follows.all()
-    posts = Post.objects.filter(post_author__in=users_followed).order_by('-created_at')
+
+    # Set up Pagination
+    p = Paginator(Post.objects.filter(post_author__in=users_followed).order_by('-created_at'), 10)
+    page = request.GET.get('page')
+    posts = p.get_page(page)
+
     return render(request, "network/following.html", {"posts": posts})
 
 
@@ -79,22 +97,24 @@ def edit_post(request):
 
 
 @csrf_exempt
-@login_required(login_url='login')
 def like_post(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        post_id = data.get('post_id')
-        post = get_object_or_404(Post, id=post_id)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            data = json.loads(request.body)
+            post_id = data.get('post_id')
+            post = get_object_or_404(Post, id=post_id)
 
-        if post.likes.filter(id=request.user.id).exists():
-            post.likes.remove(request.user)
-            return JsonResponse({'like': False, 'likes_count': post.likes.count()})
+            if post.likes.filter(id=request.user.id).exists():
+                post.likes.remove(request.user)
+                return JsonResponse({'like': False, 'likes_count': post.likes.count()})
+            else:
+                post.likes.add(request.user)
+                return JsonResponse({'like': True, 'likes_count': post.likes.count()})
+
         else:
-            post.likes.add(request.user)
-            return JsonResponse({'like': True, 'likes_count': post.likes.count()})
-
+            return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
     else:
-        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)  
+        return JsonResponse({'user_is_not_loggin': True})
 
 
 def profile_view(request, user_name):

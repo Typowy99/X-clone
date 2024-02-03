@@ -21,15 +21,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const likeCountIcon = document.querySelector(`#like-btn-${postId} i.fa-heart`);
                 const likeCountText = document.querySelector(`#likes-count-${postId}`);
-                
-                if (data.like) {
-                    likeCountIcon.classList.remove('fa-regular');
-                    likeCountIcon.classList.add('fa-solid');
+                if (data.user_is_not_loggin) {
+                    console.log("nie jestes zalogowany")
                 } else {
-                    likeCountIcon.classList.remove('fa-solid');
-                    likeCountIcon.classList.add('fa-regular');
+                    if (data.like) {
+                        likeCountIcon.classList.remove('fa-regular');
+                        likeCountIcon.classList.add('fa-solid');
+                    } else {
+                        likeCountIcon.classList.remove('fa-solid');
+                        likeCountIcon.classList.add('fa-regular');
+                    }
+                    likeCountText.textContent = data.likes_count;
                 }
-                likeCountText.textContent = data.likes_count;
             })
             .catch(error => {
                 console.error('Error:', error);
