@@ -18,8 +18,14 @@
 
 <h4>posts:</h4>
 {% for post in posts %}
-    <div>{{post.post_author}}</div>
-    <div>{{post.content}}</div>
+    {% if post.post_author.username == request.user.username %}
+        <button id="edit-btn-{{ post.id }}" data-username="{{ profile }}">Edit</button>
+        <div id="edit-formarea-{{ post.id }}" class="mb-3">
+            <textarea id="edit-textarea-{{ post.id }}" class="form-control" rows="3">{{post.content}}</textarea>
+            <button id="save-btn-{{ post.id }}" class="btn btn-primary">Save</button>
+        </div>
+    {% endif %}
+    <div id="post-content-{{ post.id }}">{{post.content}}</div>
     <div>{{post.created_at}}</div>
     <hr> 
 {% endfor %}

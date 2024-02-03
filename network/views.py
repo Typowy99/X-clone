@@ -25,6 +25,13 @@ def index(request):
 
 
 @login_required(login_url='login')
+def view_following_posts(request):
+    users_followed = request.user.follows.all()
+    posts = Post.objects.filter(post_author__in=users_followed).order_by('-created_at')
+    return render(request, "network/following.html", {"posts": posts})
+
+
+@login_required(login_url='login')
 def add_post(request):
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -33,6 +40,30 @@ def add_post(request):
             post = Post.objects.create(post_author=request.user, content=post_content)
             post.save()
             return redirect('index')
+
+
+@csrf_exempt
+@login_required(login_url='login')
+def edit_post(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        post_new_content = data.get('post_content')
+
+        if post_id and post_new_content:
+            post_to_update = get_object_or_404(Post, id=post_id)
+
+            #check user is author post
+            if request.user == post_to_update.post_author:
+                post_to_update.content = post_new_content
+                post_to_update.save()
+                return JsonResponse({'message': 'Post updated successfully.'})
+            else:
+                return JsonResponse({'error': 'You are not authorized to edit this post.'}, status=403)
+        else:
+            return JsonResponse({'error': 'Missing post_id or post_content'}, status=400)
+    else:
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
 
 
 def profile_view(request, user_name):
