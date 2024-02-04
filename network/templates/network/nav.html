@@ -1,33 +1,65 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Network</a>
-    <div>
-      <ul class="navbar-nav mr-auto">
-        {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'profile' user.username %}"><strong>{{ user.username }}</strong></a>
-            </li>
-        {% endif %}
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Navbar brand -->
+      <a class="navbar-brand mt-2 mt-lg-0" href="{% url 'index' %}">
+        <img
+          src="{% static 'network/images/logo.png' %}"
+          height="30"
+          alt="Network Logo"
+          loading="lazy"
+        />
+      </a>
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
             <a class="nav-link" href="{% url 'all_users' %}">Profile list</a>
-          </li>
+        </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'index' %}">All Posts</a>
+            <a class="nav-link" href="{% url 'index' %}">All Posts</a>
         </li>
         {% if user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'following' %}">Following</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-            </li>
-        {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Log In</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'register' %}">Register</a>
-            </li>
         {% endif %}
-      </ul>
+    </ul>
+      <!-- Left links -->
+
+      <!-- Right elements -->
+      <div class="d-flex align-items-center">
+        <!-- Avatar -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if user.is_authenticated %}
+          <li class="nav-item d-flex align-items-center">
+            <img src="{% static 'network/images/user_profile_default.jpg' %}" class="rounded-circle" height="25" alt="User Avatar" loading="lazy">
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' user %}" role="button" aria-expanded="false">
+              <strong>{{ request.user }}</strong>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <!-- Right elements -->
     </div>
-  </nav>
+    <!-- Collapsible wrapper -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+<br>
