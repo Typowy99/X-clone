@@ -38,7 +38,8 @@
                 </div>
             </div>
             <br>
-            {% if not user == profile %}
+            
+            {% if not user == profile and user.is_authenticated %}
                 {% if profile in user.follows.all %}
                     <button id="follow-btn" type="button" class="btn btn-outline-secondary" data-username={{ profile }}>Unfollow</button>
                 {% else %}
