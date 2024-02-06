@@ -19,31 +19,32 @@ This project is a clone of the X social network, implemented using Python with t
 
 ## Run Locally
 
-Clone the project
+1. **Clone the project**:
+    ```
+    git clone https://link-to-project
+    ```
 
-```bash
-  git clone https://link-to-project
-```
+2. **Go to the project directory**:
+    ```
+    cd my-project
+    ```
 
-Go to the project directory
+3. **Build Docker image** (if not built already):
+    ```
+    docker-compose build
+    ```
 
-```bash
-  cd my-project
-```
+4. **Run migrations**:
+    ```
+    docker-compose run web python manage.py migrate
+    ```
 
-Install dependencies
+5. **Start the server**:
+    ```
+    docker-compose up
+    ```
 
-```bash
-  pip install -r requirements.txt
-```
-Run migrations:
-```bash
-  python manage.py migrate
-```
+After completing these steps, the application should be available locally at the address and port configured in the `docker-compose.yml` file. Users who have downloaded the project can now interact with the application running in the Docker container.
 
-Start the server
 
-```bash
-  python manage.py runserver
-```
 
