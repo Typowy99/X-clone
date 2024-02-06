@@ -1,3 +1,4 @@
+
 [id^="edit-formarea-"] {
     display: none;
 }
@@ -12,4 +13,8 @@ a {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.form-textarea {
+    height: 100px;
+    width: 100%;
 }

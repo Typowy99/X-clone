@@ -6,32 +6,27 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from .models import User, Comment, Post
-from django import forms
 import json
+from .forms import PostForm
+from django.contrib import messages
 
 #import Pagination Stuff
 from django.core.paginator import Paginator
 
 
-
-class PostForm(forms.Form):
-    comment = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-label', 'rows': '3', 'style': 'width: 100%;'}), label=False)
-
-
 def index(request):
-
     # Set up Pagination
     p = Paginator(Post.objects.all().order_by('-created_at'), 10)
     page = request.GET.get('page')
     posts = p.get_page(page)
-
-
+    
     if request.user.is_authenticated:
         form = PostForm()
         return render(request, "network/index.html", {
             "form": form,
             "posts": posts
         })
+    
     return render(request, "network/index.html", {
         "posts": posts
     })
@@ -66,10 +61,14 @@ def add_post(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            post_content = form.cleaned_data['comment']
-            post = Post.objects.create(post_author=request.user, content=post_content)
+            post = form.save(commit=False)
+            post.post_author = request.user
             post.save()
+            messages.info(request, 'Your post has been posted!')
             return redirect('index')
+    else:
+        return redirect('index')
+
 
 
 @csrf_exempt
